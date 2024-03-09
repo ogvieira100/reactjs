@@ -1,0 +1,306 @@
+https://pt-br.react.dev/ site oficial 
+
+
+https://pt-br.react.dev/learn/start-a-new-react-project 
+frameworks 
+
+
+https://pt-br.react.dev/learn/describing-the-ui
+jsx
+
+
+criando projeto cra 
+https://create-react-app.dev/docs/getting-started
+para criar um projeto no tamplate typescript 
+
+npx create-react-app my-app --template=typescript 
+
+primeira pagina a ser acessada é a App.tsx
+
+const App =  ()=> {
+  return (
+    <>
+      <h1>Meu Primeiro Componente</h1>
+    </>
+  )
+}
+export default App;
+
+primeira implementação padrão
+
+projeto com vite escolha a opção 
+npm create vite@latest
+escolha react typescripy com template SWC performance muito maior 
+depois da um npm i 
+depois npm run dev
+
+
+export default () => {
+    let frutas: string[] = ['maça', 'banana', 'pessego', 'pera'];
+    return (
+        <>
+            <ul>
+                {frutas.map((fr) => 
+                    (<li>
+                        {fr}
+                    </li>))}
+            </ul>
+            <h1>
+                CompB
+            </h1>
+        </>
+    )
+}
+
+para fazer variação entre tsx e html use =>  ()
+
+
+para utilizar comunicação entre componentes pai e filho 
+utilize 
+import  { useState } from 'react'
+vai guardar o estado e atualizar 
+o estado para renderizar 
+
+
+import ColorSelect from './ColorSelect'
+import  { useState } from 'react'
+ 
+
+export default () => {
+   
+    const[color,setColor]   = useState('blue');
+
+    const yellowFunc = () => {
+        alert('yellow')   
+        setColor('yellow')  
+        
+    }
+    const redFunc = () => setColor('red') 
+    const blueFunc = () =>  setColor('blue')  
+   
+   
+    return (
+        <>
+        <div style={{backgroundColor:color, width:'100%',height:'100px'}} >
+            fui pintado pelo componente abaixo 
+        </div>
+         <ColorSelect yellow={yellowFunc}
+          funcParEntrada={ (datas)=> alert( `nome vindo do filho ${datas.nome} altura vindo do filho ${datas.altura} `  ) } 
+          red={redFunc} 
+          blue={blueFunc} >
+         </ColorSelect>
+        </>
+    )
+}
+
+
+type dados = {
+
+    nome:string, altura:number
+}
+type propColor = {
+    yellow:() => void
+    red:()=>void
+    blue:()=>void
+    funcParEntrada:(dados:dados)=> void
+}
+
+export default (props:propColor) => 
+{
+
+ 
+    return (
+        <>
+            <button onClick={()=> props.yellow()} >
+                yellow
+            </button>
+            <button onClick={()=> props.red()} >
+                red
+            </button>
+            <button onClick={()=> props.blue()} >
+                blue
+            </button>
+          
+            <button onClick={()=> props.funcParEntrada({nome:'osmar',altura:1000}) } >
+                func dados Entrada 
+            </button>
+        </>
+    )
+}
+
+UseStates ao renderizar o valor ele da um update no componente inteiro 
+
+os efeitos do set count so serão aplicados após a renderização 
+só pode ser executado uma vez
+para poder fazer dessa forma tem que passar uma expresão
+
+setCount(c=> c + 1)
+setCount(c=> c + 1)
+dessa forma o valor de c é 2 não 1
+
+o use effect verifica o ciclo de vida do componente 
+com os dois ultimos parametros ele fica verificando as alterações desses usesStates
+},[firstName,lastName ])
+  useEffect(()=>
+    {
+            setFullName(`${firstName} ${lastName}`)
+
+            return ()=> {
+
+                console.log('final ciclo vida componente ')
+            }
+
+    },[firstName,lastName ])
+import { useEffect, useState } from "react"
+
+export default () => {
+    const [firstName,setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [fullName, setFullName] = useState('')
+
+    useEffect(()=>
+    {
+            setFullName(`${firstName} ${lastName}`)
+
+            return ()=> {
+
+                console.log('final ciclo vida componente ')
+            }
+
+    },[firstName,lastName ])
+
+    return (
+        <>
+        <h1>Utilizando Use Effect</h1>
+        Name:
+        <br />
+          <input
+                value={firstName}
+                onChange={e => setFirstName( e.target.value )}
+                type="text"
+                name="nome"
+                id="txtNome"
+            />
+            <br />
+            LastName:
+            <br />
+            <input
+                value={lastName}
+                onChange={e => setLastName( e.target.value )}
+                type="text"
+                name="txtLast"
+                id="txtLast"
+            />
+            <hr /> 
+            <h1>Resultado Use Effect</h1>
+            <h1>{fullName}</h1>
+                     
+        </>
+    )
+}
+
+cssfile.module.css
+só assim para importar como modulo
+
+uma forma de um componente pai chamar funçoes de um componente filho 
+
+comp pai 
+
+utilizndo uso ref useRef
+
+import ColorSelect from './ColorSelect'
+import  { ReactElement, useState } from 'react'
+import {useRef} from 'react'
+ 
+
+export default () => {
+   
+    const[color,setColor]   = useState('blue');
+    const elColorSelect  = useRef(null)
+
+    const yellowFunc = () => {
+       
+        setColor('yellow')  
+        
+    }
+    const redFunc = () => setColor('red') 
+    const blueFunc = () =>  setColor('blue')
+    
+    const handleSetColorPanel = () => {
+
+        if (elColorSelect.current)
+        {
+            elColorSelect.current.handlerYellowButton();
+        }
+    }
+   
+   
+    return (
+        <>
+        <div style={{backgroundColor:color, width:'100%',height:'100px'}} >
+            fui pintado pelo componente abaixo 
+        </div>
+        <button onClick={handleSetColorPanel} >
+                Mudar cor buton para yellow
+        </button>
+         <ColorSelect 
+          ref={elColorSelect}
+          yellow={yellowFunc}
+          funcParEntrada={ (datas)=> alert( `nome vindo do filho ${datas.nome} altura vindo do filho ${datas.altura} `  ) } 
+          red={redFunc} 
+          blue={blueFunc} >
+         </ColorSelect>
+        </>
+    )
+}
+
+comp filho 
+
+import {forwardRef, useImperativeHandle, useState } from "react"
+
+
+type dados = {
+
+    nome:string, altura:number
+}
+type propColor = {
+    yellow:() => void
+    red:()=>void
+    blue:()=>void
+    funcParEntrada:(dados:dados)=> void
+}
+
+export default forwardRef((props:propColor, ref) => 
+{
+    const[colorYellow,setcolorYellow] = useState('white')
+
+  const handlerYellowButton = () => {
+
+        setcolorYellow('yellow');
+    }
+
+    useImperativeHandle(ref, () => ({
+        handlerYellowButton
+      }));
+
+ 
+    return (
+        <>
+            <button style={{backgroundColor:colorYellow}} onClick={()=> props.yellow()} >
+                yellow
+            </button>
+            <button onClick={()=> props.red()} >
+                red
+            </button>
+            <button onClick={()=> props.blue()} >
+                blue
+            </button>
+          
+            <button onClick={()=> props.funcParEntrada({nome:'osmar',altura:1000}) } >
+                func dados Entrada 
+            </button>
+        </>
+    )
+});
+reducer feito para gerenciar o estado por meio de funções 
+
