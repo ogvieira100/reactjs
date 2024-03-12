@@ -302,5 +302,63 @@ export default forwardRef((props:propColor, ref) =>
         </>
     )
 });
-reducer feito para gerenciar o estado por meio de funções 
 
+outra forma de comunicação de componentes pai pra filho e etc é utilizar contextos 
+
+type ThemeContextType = {
+
+  theme: string;
+  setTheme: (value: string) => void
+}
+
+export const ThemeContext = createContext<ThemeContextType>({ theme: '', setTheme: () => { } })
+
+onde o contexto envolve o componente pai e os filhos 
+
+export const App2  = () => {
+  
+
+    const [theme, setTheme] = useState('light');
+
+    return (
+      <ThemeContext.Provider value={{ theme, setTheme }}>
+        <div>
+          <Reducer></Reducer>
+          <hr />
+          <UseRef></UseRef>
+      </ThemeContext.Provider>
+    )
+  
+}
+
+export default App2;
+
+e no componente filho buscamos o contexto e alteramos o que quiser 
+
+import { CSSProperties, useContext } from "react"
+import { container } from './Css'
+import { ThemeContext } from "./App"
+
+export default () => {
+
+    const context = useContext(ThemeContext)
+
+    const handler = () => {
+
+        context.setTheme('dark');
+    }
+
+    return (
+        <>
+            <div style={container} >
+
+                Olá no estilo 1
+                Meu thema é {context.theme}
+
+                <button onClick={handler} >
+                    mudar thema para dark
+                </button>
+            </div>
+        </>
+    )
+}

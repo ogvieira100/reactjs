@@ -1,0 +1,141 @@
+para começar vc cria os types 
+
+
+//Initial State
+export type User = {
+
+        id:number,
+        name:string
+}
+
+//Initial State
+export type UserState = {
+    user:User| null
+
+}
+
+//Actions 
+type SignInUser = {
+    type :'SIGNIN',
+    payload:{user:User}
+}
+
+type SignOutUser = {
+    type :'SIGNOUT'
+}
+
+export type UserAction  = SignInUser | SignOutUser
+
+onde temos os estados iniciais 
+//Initial State
+export type User = {
+
+        id:number,
+        name:string
+}
+
+//Initial State
+export type UserState = {
+    user:User| null
+
+}
+e actions 
+
+//Actions 
+type SignInUser = {
+    type :'SIGNIN',
+    payload:{user:User}
+}
+
+type SignOutUser = {
+    type :'SIGNOUT'
+}
+
+export type UserAction  = SignInUser | SignOutUser
+que são exportados dessa forma 
+
+depois criamos os reducers 
+
+
+import { UserState } from "../../types/UserReducer";
+import { ActionType } from "../config";
+
+export const userInitialState: UserState = {
+
+    user: null
+}
+
+export const userReducer = (state: UserState, action: ActionType): UserState => {
+
+    switch (action.type) {
+        case 'SIGNIN':
+            return action.payload
+
+        case 'SIGNOUT':
+            return userInitialState
+        default :
+        return state;
+    }
+}
+onde usa o state e os actions gerais 
+depois temos o config que terá 
+
+import { ThemeAction } from "../types/ThemeReducer"
+import { UserAction } from "../types/UserReducer"
+import { themeInitialState, themeReducer } from "./reducers/themeReducer"
+import { userInitialState, userReducer } from "./reducers/userReducer"
+
+// Exportar todas os estados iniciais 
+export const InitialState = {
+   theme: themeInitialState,
+   user:userInitialState
+}
+
+//Export all reducers
+
+export const Reducers = (state:InitialStateType,action:ActionType) =>({
+    theme:themeReducer(state.theme,action),
+    user:userReducer(state.user,action)
+
+})
+
+//Export all types
+export type InitialStateType = typeof InitialState
+export type ActionType = ThemeAction | UserAction
+
+e finalmente nosso contexto 
+
+import React, { ReactNode, createContext,  useReducer } from "react";
+import { ActionType, InitialState, InitialStateType, Reducers } from "./config";
+
+
+type Props = {
+
+    children:ReactNode
+}
+
+type ContextType = {
+
+    state:InitialStateType,
+    dispatch:React.Dispatch<ActionType>
+}
+
+export const Context  = createContext<ContextType>({
+    state:InitialState,
+     dispatch:()=>null
+    })
+
+export const ContextProvider  = ({children}:Props) => 
+{
+
+    const [state,dispatch] = useReducer(Reducers,InitialState);
+
+    return (
+       <Context.Provider value={{state,dispatch}} >
+            {children}
+       </Context.Provider>
+    )
+}
+
+
+que terá todos os reducers e vai envolver todos os componetens nesse contexto 
